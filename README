@@ -1,0 +1,55 @@
+menu.gb is a menu software for the 64 MBit "GB USB Smart Card" from EMS
+
+"menu.gb" was written by Christophe Staiesse.
+Refer to the file "LICENSE" for information on licensing terms of this software.
+
+Description
+   This program is meant to be installed on a flash cartridge for Game Boy by a
+   flashing software, usualy along with several Game Boy ROM images. At
+   startup, the program scans the cartridge for ROM images and presents a menu
+   to the user allowing him to choose an image to launch.
+
+   It has been designed for the 64 MBit "GB USB Smart Card" by EMS. Other
+   models are not currently supported.
+
+Compilation
+   Prerequisite:
+     - A Unix-like environment (a Bourne shell, awk, sed, ...)
+     - RGBDS (Rednex GameBoy Development System) that you can find at:
+         https://github.com/bentley/rgbds
+
+   Type "make". This will generate a 32 KB ROM image "menu.gb" with the
+   Game Boy Color and Super Game Boy enhancement flags disabled and with
+   "GB16M" as the title. The title can be changed by specifying the MENUTITLE
+   variable when invoking make. 
+
+Testing
+   Type "make tests". This will generate test image files with instructions for
+   testing. You can flash a test image on a real flash cartridge or launch
+   them on a Game Boy emulator supporting EMS cartridge images.
+
+   BGB (http://bgb.bircd.org) is an emulator for Windows (but it works well
+   with Wine) that supports EMS cartridge images. The title must be "GB16M"
+   (the default).
+
+   You can use ems-flasher (http://lacklustre.net/projects/ems-flasher/) to
+   flash the images on a real cartridge. Each test image is a full page (4 MB)
+   so that all ROMs previously present on the cartridge are overwritten.
+
+Installation
+   The flashing software must copy the menu ROM (menu.gb) at the beginning of
+   the page, at offset 0.
+
+   The Game Boy run mode (Compatibility mode, Color Game Boy features,
+   Super Game Boy features) and the palette (in Compatibility mode on a
+   Game Boy Color) will be set according to the header of the menu ROM and,
+   of course, depending of the capabilities of the type of Game Boy the
+   software is running on. The headers of other ROMs have no influence on this.
+
+   If the Game Boy models on which the cartridge will be used are not known, a
+   page should contain only ROMs with identical settings.
+
+   Each ROM must be copied at an offset that is aligned to its size. This is
+   due to how bank selection works with the EMS' cartridge.
+
+   The menu only supports ROMs whose size is a power of two.
