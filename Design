@@ -1,0 +1,49 @@
+Notes on the design of menu.gb
+
+Didrik Madheden has documented the programming of the memory controller of the
+cartridge (and previous models). See http://blog.gg8.se/gameboyprojects/week09/EMS_FAQ.txt
+Checkout also bootstrap.asm.
+
+The EMS cartridge has 8 MB (64 MBit) of flash memory divided into two pages. At
+boot, the EMS hardware selects the first page (the default) or the second page
+(when the user quickly turn off and turn on the Game Boy).
+
+The Game Boy sees the page as a ROM of 4 MB. The other page is not accessible.
+The page is divided in 256 banks of 16 KB.
+
+The menu software sits at offset 0 of the page (bank 0 and 1). The Game Boy run
+mode (Compatibility mode, Color Game Boy features, Super Game Boy features) and
+the palette (in Compatibility mode on a Game Boy Color) will be set according to
+the header of the menu ROM and, of course, depending of the capabilities of the
+type of Game Boy the software is running on.
+
+Operation
+  1) Scan the page for ROMs
+     - The scan starts at bank 2 (offset 0x8000) to skip the menu. It is thus
+       assumed that the menu size is 32 KB.
+     - Check for the presence of a ROM header. A ROM header is valid if the ROM
+       could be booted by the Game Boy if it was in an independent cartridge,
+       i.e. the Nintendo Logo and the header checksum must be correct.
+     - The size code must be valid and represent a size of a power of two less
+       or equal to 2 MB.
+     - If no valid header was found or the code size was incorrect, continue
+       the scan to the next offset multiple of 32 KB (i.e. skip two banks).
+     - The title is taken from the 16 chars of the title field of the header.
+       The charset used is Nintendo ASCII: ASCII characters 32 to 95 with 92
+       being the Yen symbol instead of the backslash. Characters outside the
+       range 32-95 are replaced by a space. NUL characters (0) does not indicate
+       the end of a string. The bit 7 of the last character of the title is used
+       as a flag to enable or disable Game Boy Color features. If this bit is
+       set, the last character will be replaced by a space. Leading spaces are
+       preserved. Nintendo documents that it is possible to store a
+       four-character game code in the title. If present, the game code will be
+       shown.
+     - The title and the first bank number are inserted in a list. 
+     - Continue the scan until the end of the page (bank 255). Skip the entire
+       ROM if a ROM was found and the size code was correct and the size was a
+       power of two. Otherwise skip 2 banks (32 KB), the minimal size of a ROM.
+  2) Sort the list of ROM by title in ASCII order (spaces are signicant). The
+     sort algorithm used is not stable so if multiple ROMs have the same name,
+     the display order will not be guaranted.
+  3) Display the menu
+  4) Bootstrap the choosen ROM.
