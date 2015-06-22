@@ -20,7 +20,7 @@ gentiles() {
     else
         rev=0
     fi
-    od -tu1 -j$(($1*8)) -N$((($2-$1+1)*8)) -w8 "$fontf" |
+    od -v -tu1 -j$(($1*8)) -N$((($2-$1+1)*8)) -w8 "$fontf" |
         cut -d' ' -f2- | sed '$d' |
         awk -vrev=$rev '
         BEGIN {OFS=", "}
