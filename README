@@ -46,6 +46,11 @@ Installation
    of course, depending of the capabilities of the type of Game Boy the
    software is running on. The headers of other ROMs have no influence on this.
 
+   To enable the grey palette instead of the dark green default one when a
+   Game Boy Color is run in Compatibility mode: in the header, set the title of
+   to "MENU#" (padded with NUL characters), the Old Licensee Code to 0x33 and
+   the New Licensee Code (two bytes) to 0x30, 0x31.
+
    If the Game Boy models on which the cartridge will be used are not known, a
    page should contain only ROMs with identical settings.
 
