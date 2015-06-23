@@ -88,6 +88,14 @@ IF DEF(TESTROMLIST)
 .l20:
 ENDC
 
+    ; If there is only one ROM, launch it directly
+    ld a,[romlistlen]
+    cp 1
+    jr nz,.l25
+
+    ld a,[romlist]
+    jp launchrom
+.l25:
 	WRITESTRING_Y_LIT_CENTER 0, "MENU.GB V{VERSION}"
 
 	call drawbox
@@ -192,6 +200,7 @@ mainloop:
 
 	; Jump into the selected ROM
 	ld a,[hl]
+launchrom:
 	ld b,a
 	ld a,[gbtype]
 	ld c,a
